@@ -24,6 +24,17 @@ class ViewController: UIViewController {
         }
         userIsInTheMiddleOfTyping = true
     }
+    
+    @IBAction private func touchDecimal(sender: UIButton) {
+        if isDecimalValid() {
+            let textCurrentlyInDisplay = display.text!
+            display.text = textCurrentlyInDisplay + sender.currentTitle!
+        }
+    }
+    
+    private func isDecimalValid() -> Bool {
+        return !display.text!.containsString(".")
+    }
 
     private var displayValue : Double {
         get {
