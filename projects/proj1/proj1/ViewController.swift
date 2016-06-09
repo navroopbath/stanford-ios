@@ -17,6 +17,9 @@ class ViewController: UIViewController {
     @IBAction private func touchDigit(sender: UIButton) {
         let digit = sender.currentTitle!
         if userIsInTheMiddleOfTyping {
+//            if digit == "." && display.text!.rangeOfString(".") != nil {
+//                return // A number cannot have more than one decimal
+//            }
             let textCurrentlyInDisplay = display.text!
             display.text = textCurrentlyInDisplay + digit
         } else {

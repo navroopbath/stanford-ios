@@ -26,13 +26,18 @@ class CalculatorBrain {
         "÷" : Operation.BinaryOperation({ $0 / $1 }),
         "+" : Operation.BinaryOperation({ $0 + $1 }),
         "-" : Operation.BinaryOperation({ $0 - $1 }),
-        "=" : Operation.Equals
+        "±" : Operation.UnaryOperation({ -$0 }),
+        "x²"  : Operation.UnaryOperation({ $0 * $0 }),
+        "x⁻¹" : Operation.UnaryOperation({ 1 / $0 }),
+        "=" : Operation.Equals,
+        "AC": Operation.Clear
     ]
     
     private enum Operation {
         case Constant(Double)
         case UnaryOperation((Double) -> Double)
         case BinaryOperation((Double, Double) -> Double)
+        case Clear
         case Equals
     }
     
@@ -48,6 +53,9 @@ class CalculatorBrain {
                 pending = PendingBinaryOperation(firstOperand: accumulator, binaryOp: function)
             case .Equals:
                 performPendingBinaryOperation()
+            case .Clear:
+                accumulator = 0
+                pending = nil
             }
         }
     }
