@@ -12,9 +12,19 @@ class CalculatorBrain {
     
     private var accumulator = 0.0
     private var pending : PendingBinaryOperation?
+    private var description = ""
+    private var isPartialResult : Bool {
+        get {
+            return pending != nil
+        }
+    }
     
     func setOperand(operand : Double) {
         accumulator = operand
+        if (!isPartialResult) {
+            description = ""
+        }
+        description += String(operand)
     }
     
     private var operations : Dictionary<String, Operation> = [
@@ -47,8 +57,10 @@ class CalculatorBrain {
             case .Constant(let value):
                 accumulator = value
             case .UnaryOperation(let function):
+                addUnaryOperationDescription(<#T##symbol: String##String#>)
                 accumulator = function(accumulator)
             case .BinaryOperation(let function):
+                description += symbol
                 performPendingBinaryOperation()
                 pending = PendingBinaryOperation(firstOperand: accumulator, binaryOp: function)
             case .Equals:
@@ -57,6 +69,15 @@ class CalculatorBrain {
                 accumulator = 0
                 pending = nil
             }
+        }
+    }
+    
+    private func addUnaryOperationDescription(symbol : String) {
+        if isPartialResult {
+            let lastOperandIndex = description.endIndex.advancedBy(-1)
+            description = description.substringToIndex(lastOperandIndex) + "\(symbol)(" + description.substringFromIndex(lastOperandIndex) + ")"
+        } else {
+            description = "\(symbol)(" + description + ")"
         }
     }
 
