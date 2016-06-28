@@ -19,6 +19,18 @@ class CalculatorBrain {
         }
     }
     
+    var getDescription : String {
+        get {
+            if (description == "") { return description }
+            if (isPartialResult) {
+                description += "..."
+            } else {
+                description += "="
+            }
+            return description
+        }
+    }
+    
     func setOperand(operand : Double) {
         accumulator = operand
         if (!isPartialResult) {
@@ -55,9 +67,10 @@ class CalculatorBrain {
         if let operation = operations[symbol] {
             switch (operation) {
             case .Constant(let value):
+                description += symbol
                 accumulator = value
             case .UnaryOperation(let function):
-                addUnaryOperationDescription(<#T##symbol: String##String#>)
+                addUnaryOperationDescription(symbol)
                 accumulator = function(accumulator)
             case .BinaryOperation(let function):
                 description += symbol
@@ -66,13 +79,18 @@ class CalculatorBrain {
             case .Equals:
                 performPendingBinaryOperation()
             case .Clear:
-                accumulator = 0
-                pending = nil
+                clear()
             }
         }
     }
     
-    private func addUnaryOperationDescription(symbol : String) {
+    private func clear() {
+        accumulator = 0
+        description = ""
+        pending = nil
+    }
+    
+    private func addUnaryOperationDescription(Symbol : String) {
         if isPartialResult {
             let lastOperandIndex = description.endIndex.advancedBy(-1)
             description = description.substringToIndex(lastOperandIndex) + "\(symbol)(" + description.substringFromIndex(lastOperandIndex) + ")"

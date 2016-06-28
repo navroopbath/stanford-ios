@@ -11,19 +11,17 @@ import UIKit
 class ViewController: UIViewController {
     
     @IBOutlet private weak var display: UILabel!
+    @IBOutlet private weak var sequenceOfOps: UILabel!
     
     private var userIsInTheMiddleOfTyping = false
     
     @IBAction private func touchDigit(sender: UIButton) {
         let digit = sender.currentTitle!
         if userIsInTheMiddleOfTyping {
-//            if digit == "." && display.text!.rangeOfString(".") != nil {
-//                return // A number cannot have more than one decimal
-//            }
             let textCurrentlyInDisplay = display.text!
             display.text = textCurrentlyInDisplay + digit
         } else {
-            display!.text = digit
+            display.text = digit
         }
         userIsInTheMiddleOfTyping = true
     }
@@ -32,6 +30,7 @@ class ViewController: UIViewController {
         if isDecimalValid() {
             let textCurrentlyInDisplay = display.text!
             display.text = textCurrentlyInDisplay + sender.currentTitle!
+            userIsInTheMiddleOfTyping = true
         }
     }
     
@@ -58,6 +57,8 @@ class ViewController: UIViewController {
         if let mathematicalSymbol = sender.currentTitle {
             brain.performOperation(mathematicalSymbol)
         }
+        let description = brain.getDescription
+        sequenceOfOps.text = description == "" ? " " : description
         displayValue = brain.result
     }
 }
