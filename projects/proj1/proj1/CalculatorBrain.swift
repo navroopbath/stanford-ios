@@ -18,16 +18,18 @@ class CalculatorBrain {
             return pending != nil
         }
     }
+    private var lastOperandIndex : String.CharacterView.Index?
     
     var getDescription : String {
         get {
             if (description == "") { return description }
+            var descriptionWithStatus = description
             if (isPartialResult) {
-                description += "..."
+                descriptionWithStatus += "..."
             } else {
-                description += "="
+                descriptionWithStatus += "="
             }
-            return description
+            return descriptionWithStatus
         }
     }
     
@@ -36,7 +38,9 @@ class CalculatorBrain {
         if (!isPartialResult) {
             description = ""
         }
+        lastOperandIndex = description.endIndex
         description += String(operand)
+        
     }
     
     private var operations : Dictionary<String, Operation> = [
@@ -90,12 +94,11 @@ class CalculatorBrain {
         pending = nil
     }
     
-    private func addUnaryOperationDescription(Symbol : String) {
+    private func addUnaryOperationDescription(opSymbol : String) {
         if isPartialResult {
-            let lastOperandIndex = description.endIndex.advancedBy(-1)
-            description = description.substringToIndex(lastOperandIndex) + "\(symbol)(" + description.substringFromIndex(lastOperandIndex) + ")"
+            description = description.substringToIndex(lastOperandIndex!) + "\(opSymbol)(" + description.substringFromIndex(lastOperandIndex!) + ")"
         } else {
-            description = "\(symbol)(" + description + ")"
+            description = "\(opSymbol)(" + description + ")"
         }
     }
 
