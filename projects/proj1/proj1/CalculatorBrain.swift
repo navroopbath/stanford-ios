@@ -19,7 +19,8 @@ class CalculatorBrain {
         }
     }
     private var lastOperandIndex : String.CharacterView.Index?
-    
+    private var internalProgram = [AnyObject]()
+        
     var getDescription : String {
         get {
             if (description == "") { return description }
@@ -40,6 +41,7 @@ class CalculatorBrain {
         }
         lastOperandIndex = description.endIndex
         description += String(operand)
+        internalProgram.append(operand)
         
     }
     
@@ -69,6 +71,7 @@ class CalculatorBrain {
     
     func performOperation(symbol : String) {
         if let operation = operations[symbol] {
+            internalProgram.append(symbol)
             switch (operation) {
             case .Constant(let value):
                 description += symbol
@@ -92,6 +95,7 @@ class CalculatorBrain {
         accumulator = 0
         description = ""
         pending = nil
+        internalProgram.removeAll()
     }
     
     private func addUnaryOperationDescription(opSymbol : String) {
@@ -113,6 +117,26 @@ class CalculatorBrain {
         var firstOperand : Double
         var binaryOp : (Double, Double) -> Double
     }
+    
+    typealias PropertyList = AnyObject
+    var program: PropertyList {
+        get {
+            return internalProgram // returned as a copy since it is a value type
+        }
+        set {
+            clear()
+            if let arrayOfOps = newValue as? [AnyObject] {
+                for op in arrayOfOps {
+                    if let operand = op as? Double {
+                        setOperand(operand)
+                    } else if let operation = op as? String {
+                        performOperation(operation)
+                    }
+                }
+            }
+        }
+    }
+    
     
     var result : Double {
         get {
