@@ -18,7 +18,7 @@ class CalculatorBrain {
             return pending != nil
         }
     }
-    private var lastOperandIndex : String.CharacterView.Index?
+    private var lastOperandBeginIndex : String.CharacterView.Index?
     private var internalProgram = [AnyObject]()
         
     var getDescription : String {
@@ -35,12 +35,14 @@ class CalculatorBrain {
     }
     
     func setOperand(operand : Double) {
+        lastOperandBeginIndex = description.endIndex
         description += String(operand)
         internalProgram.append(operand)
         setOperandForDouble(operand)
     }
     
     func setOperand(variableName : String) {
+        lastOperandBeginIndex = description.endIndex
         description += variableName
         internalProgram.append(variableName)
         if let variableValue = variableValues[variableName] {
@@ -55,7 +57,6 @@ class CalculatorBrain {
         if (!isPartialResult) {
             description = ""
         }
-        lastOperandIndex = description.endIndex - String(operand).size
     }
     
     var variableValues : Dictionary<String, Double> = [:]
@@ -115,7 +116,7 @@ class CalculatorBrain {
     
     private func addUnaryOperationDescription(opSymbol : String) {
         if isPartialResult {
-            description = description.substringToIndex(lastOperandIndex!) + "\(opSymbol)(" + description.substringFromIndex(lastOperandIndex!) + ")"
+            description = description.substringToIndex(lastOperandBeginIndex!) + "\(opSymbol)(" + description.substringFromIndex(lastOperandBeginIndex!) + ")"
         } else {
             description = "\(opSymbol)(" + description + ")"
         }
@@ -145,7 +146,11 @@ class CalculatorBrain {
                     if let operand = op as? Double {
                         setOperand(operand)
                     } else if let operation = op as? String {
-                        performOperation(operation)
+                        if let variableValue = variableValues[operation] {
+                            setOperand(variableValue)
+                        } else {
+                            performOperation(operation)
+                        }
                     }
                 }
             }

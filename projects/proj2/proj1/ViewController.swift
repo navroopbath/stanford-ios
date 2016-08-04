@@ -13,8 +13,8 @@ class ViewController: UIViewController {
     @IBOutlet private weak var display: UILabel!
     @IBOutlet private weak var sequenceOfOps: UILabel!
     private var opContainsVariable = false
-    
     private var userIsInTheMiddleOfTyping = false
+    private let MEMORYBUTTONVARIABLE = "M"
     
     // TODO should tapping "M" trigger touchDigit? This may cause problems if there is already an actual
     // digit in the display and the user then presses "M"
@@ -44,6 +44,13 @@ class ViewController: UIViewController {
             brain.setOperand(display.text!)
             opContainsVariable = true
         }
+    }
+    
+    private var savedProgram : CalculatorBrain.PropertyList?
+    
+    @IBAction func saveVariable(sender: UIButton) {
+        brain.variableValues[MEMORYBUTTONVARIABLE] = displayValue
+        brain.program = brain.program
         displayValue = brain.result
     }
     
