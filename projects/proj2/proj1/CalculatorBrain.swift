@@ -112,6 +112,7 @@ class CalculatorBrain {
         description = ""
         pending = nil
         internalProgram.removeAll()
+        variableValues.removeValueForKey("M")
     }
     
     private func addUnaryOperationDescription(opSymbol : String) {
